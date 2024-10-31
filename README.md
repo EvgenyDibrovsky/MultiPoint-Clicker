@@ -9,9 +9,7 @@
 3. Intuitive and user-friendly interface.
 4. Customizable clickable area and functional hotkeys.
 
-### Demo
-<img width="360" height="640" src="https://github.com/user-attachments/assets/d1b1571e-376d-4721-a497-b5bda99cde73">
-
+ 
 ## Installation and Setup
 
 1. **Clone the repository**
@@ -84,9 +82,7 @@ If you prefer using an IDE like PyCharm or VSCode:
 2. **Find the executable**
    - After the build process is complete, the executable will be located in the `dist/multipoint_clicker` directory.
 
-## How to Use
-<img width="500" height="480" src="https://github.com/user-attachments/assets/b076825d-3d57-45e4-95b1-1207dac4038a">
-
+ 
 ### 1. Launching the Application
 - Open the MultiPoint Clicker.
 - The main window will display several buttons for configuring and controlling the auto clicker.
