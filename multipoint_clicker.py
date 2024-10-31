@@ -19,7 +19,7 @@ class AutoClickerApp:
 
     def setup_ui(self):
         self.root.title("MultiPoint Clicker")
-        self.root.geometry("500x450")
+        self.root.geometry("500x400")
         self.root.resizable(False, False)
         self.root.configure(bg="black")
 
