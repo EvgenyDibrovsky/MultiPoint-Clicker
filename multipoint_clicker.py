@@ -12,7 +12,7 @@ class AutoClickerApp:
         self.root = root
         self.click_points = [None] * 8  # Список для хранения координат кликов
         self.running = False
-        self.click_delay = 0.001  # Задержка между кликами по умолчанию (1 миллисекунда)
+        self.click_delay = 0.1  # Задержка между кликами по умолчанию (100 миллисекунд)
         self.setup_ui()
         self.setup_hotkeys()
         self.set_high_dpi_awareness()
@@ -31,7 +31,7 @@ class AutoClickerApp:
         button_style = {
             "font": ("Helvetica", 12),
             "fg": "black",
-            "activebackground": "#a3d432",  
+            "activebackground": "#cdcdcd",  
             "relief": "raised",
             "bd": 2,
             "highlightthickness": 2,
@@ -40,32 +40,64 @@ class AutoClickerApp:
             "width": 10,
             "height": 2
         }
+
+        button_style_start_stop = {
+        "font": ("Helvetica", 12),
+        "fg": "black",
+        "activebackground": "#00e100",  
+        "relief": "raised",
+        "bd": 2,
+        "highlightthickness": 2,
+        "highlightbackground": "#000000",
+        "highlightcolor": "#3e8e41",
+        "width": 10,
+        "height": 2
+        }
+
+        button_style_reset = {
+        "font": ("Helvetica", 12),
+        "fg": "black",
+        "activebackground": "#ff8c00",  
+        "relief": "raised",
+        "bd": 2,
+        "highlightthickness": 2,
+        "highlightbackground": "#000000",
+        "highlightcolor": "#3e8e41",
+        "width": 10,
+        "height": 2
+        }
         
-        # Кнопки для установки каждой из восьми точек клика (синие)
+        
+        # Кнопки для установки каждой из восьми точек клика (сервые)
         self.set_buttons = []
         button_frame = tk.Frame(self.root, bg="black")
         button_frame.pack(pady=10)
         for i in range(8):
-            button = tk.Button(button_frame, text=f"Click {i+1}", command=lambda i=i: threading.Thread(target=self.set_click_point, args=(i,)).start(), **button_style, bg="#007bff")
+            button = tk.Button(button_frame, text=f"Click {i+1}", command=lambda i=i: self.handle_click_button(i), **button_style, bg="#bdbebd")
             button.grid(row=i // 4, column=i % 4, padx=10, pady=10)
             self.set_buttons.append(button)
 
-        # Ползунок для регулировки скорости клика от 1 до 10000 миллисекунд
-        self.speed_slider = tk.Scale(self.root, from_=1, to=10000, resolution=1, orient='horizontal', label="Click Speed (milliseconds)", length=460)
-        self.speed_slider.set(self.click_delay * 1000)
-        self.speed_slider.pack(pady=10)
+        # Поле для ввода задержки клика в миллисекундах
+        delay_frame = tk.Frame(self.root, bg="black")
+        delay_frame.pack(pady=10)
+        delay_label = tk.Label(delay_frame, text="Click Delay (ms):", font=("Helvetica", 12), bg="black", fg="white")
+        delay_label.grid(row=0, column=0)
+        
+        self.delay_entry = tk.Entry(delay_frame, font=("Helvetica", 12), width=10)
+        self.delay_entry.insert(0, "100")  # Значение по умолчанию 100 миллисекунд
+        self.delay_entry.grid(row=0, column=1)
 
         # Кнопки "Старт", "Стоп" и "Сброс" в ряд (зеленые и оранжевая)
         control_frame = tk.Frame(self.root, bg="black")
         control_frame.pack(pady=10)
 
-        self.start_button = tk.Button(control_frame, text="Start clicker", command=self.start_clicker, **button_style, bg="#28a745")
+        self.start_button = tk.Button(control_frame, text="Start clicker", command=self.start_clicker, **button_style_start_stop, bg="#00e100")
         self.start_button.grid(row=0, column=0, padx=5)
 
-        self.stop_button = tk.Button(control_frame, text="Stop clicker", command=self.stop_clicker, state=tk.DISABLED, **button_style, bg="#28a745")
+        self.stop_button = tk.Button(control_frame, text="Stop clicker", command=self.stop_clicker, state=tk.DISABLED, **button_style_start_stop, bg="#00e100")
         self.stop_button.grid(row=0, column=1, padx=5)
         
-        self.reset_button = tk.Button(control_frame, text="Reset", command=self.reset_click_points, **button_style, bg="#ff8c00")
+        self.reset_button = tk.Button(control_frame, text="Reset", command=self.reset_click_points, **button_style_reset, bg="#ff8c00")
         self.reset_button.grid(row=0, column=2, padx=5)
 
         # Кредит
@@ -81,13 +113,24 @@ class AutoClickerApp:
         else:
             self.start_clicker()
 
+    def handle_click_button(self, index):
+        """Обрабатывает нажатие на кнопку: устанавливает или сбрасывает координаты"""
+        if self.click_points[index] is not None:
+            # Если координаты уже установлены, сбросить их
+            self.click_points[index] = None
+            self.set_buttons[index].config(bg="#bdbebd")  # Сброс цвета на сервый
+            print(f"Click {index + 1} coordinates reset.")
+        else:
+            # Если координаты не установлены, задать новые
+            threading.Thread(target=self.set_click_point, args=(index,)).start()
+
     def set_click_point(self, index):
         """Установить координаты точки клика, нажатие левой кнопки мыши сохраняет координаты"""
         def on_click(x, y, button, pressed):
             if pressed:
                 scale_factor = self.get_display_scale()
                 self.click_points[index] = (int(x * scale_factor), int(y * scale_factor))
-                self.set_buttons[index].config(bg="red")  # Меняем цвет кнопки на красный, если координаты заданы
+                self.set_buttons[index].config(bg="#f20000")  # Меняем цвет кнопки на красный, если координаты заданы
                 print(f"Click {index + 1} set to: {self.click_points[index]}")
                 listener.stop()
                 return False
@@ -100,16 +143,20 @@ class AutoClickerApp:
         """Сброс всех заданных координат клика"""
         self.click_points = [None] * 8
         for button in self.set_buttons:
-            button.config(bg="#007bff")  # Возвращаем кнопкам исходный цвет
+            button.config(bg="#bdbebd")  # Возвращаем кнопкам исходный цвет
         print("All click points reset")
 
     def start_clicker(self):
         """Запуск автокликера с заданными точками и скоростью"""
-        self.running = True
-        self.click_delay = self.speed_slider.get() / 1000  # Получение значения скорости клика в секундах
-        threading.Thread(target=self.run_clicker, daemon=True).start()
-        self.start_button.config(state=tk.DISABLED)
-        self.stop_button.config(state=tk.NORMAL)
+        try:
+            # Преобразуем вводимое значение в задержку в секундах
+            self.click_delay = float(self.delay_entry.get()) / 1000
+            self.running = True
+            threading.Thread(target=self.run_clicker, daemon=True).start()
+            self.start_button.config(state=tk.DISABLED)
+            self.stop_button.config(state=tk.NORMAL)
+        except ValueError:
+            print("Invalid delay value. Please enter a number.")
 
     def stop_clicker(self):
         """Остановка автокликера"""
