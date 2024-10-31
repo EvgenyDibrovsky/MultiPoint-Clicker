@@ -19,7 +19,7 @@ class AutoClickerApp:
 
     def setup_ui(self):
         self.root.title("MultiPoint Clicker")
-        self.root.geometry("500x400")
+        self.root.geometry("500x420")
         self.root.resizable(False, False)
         self.root.configure(bg="black")
 
@@ -80,7 +80,7 @@ class AutoClickerApp:
         # Поле для ввода задержки клика в миллисекундах
         delay_frame = tk.Frame(self.root, bg="black")
         delay_frame.pack(pady=10)
-        delay_label = tk.Label(delay_frame, text="Click Delay (ms):", font=("Helvetica", 12), bg="black", fg="white")
+        delay_label = tk.Label(delay_frame, text="Click Delay (ms): ", font=("Helvetica", 12), bg="black", fg="white")
         delay_label.grid(row=0, column=0)
         
         self.delay_entry = tk.Entry(delay_frame, font=("Helvetica", 12), width=10)
@@ -89,7 +89,7 @@ class AutoClickerApp:
 
         # Кнопки "Старт", "Стоп" и "Сброс" в ряд (зеленые и оранжевая)
         control_frame = tk.Frame(self.root, bg="black")
-        control_frame.pack(pady=10)
+        control_frame.pack(pady=20)
 
         self.start_button = tk.Button(control_frame, text="Start clicker", command=self.start_clicker, **button_style_start_stop, bg="#00e100")
         self.start_button.grid(row=0, column=0, padx=5)
